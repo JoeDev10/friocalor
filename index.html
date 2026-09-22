@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FríoCalor Service</title>
+<meta name="description" content="Reparación de heladeras, cocinas, lavarropas y todo tipo de electrodomésticos a domicilio. Presupuesto sin cargo por WhatsApp.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+  :root{
+    --ground:#F3F6F8;
+    --surface:#FFFFFF;
+    --ink:#0F1B2A;
+    --ink-soft:#4A5A6C;
+    --line:#D8E0E7;
+    --frio:#1B7FC4;
+    --frio-soft:#E3F1FB;
+    --calor:#EE5F26;
+    --calor-soft:#FDEBE2;
+    --wa:#25D366;
+    --wa-ink:#063B1E;
+    --hero:#0F1B2A;
+    --hero-ink:#F3F6F8;
+    --shadow:0 18px 40px -22px rgba(15,27,42,.35);
+    --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    --body:"Figtree", "Segoe UI", system-ui, sans-serif;
+    --mono:"JetBrains Mono", ui-monospace, Consolas, monospace;
+    --radius:14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme:dark;
+      --ground:#0B131D;
+      --surface:#121E2B;
+      --ink:#EAF0F5;
+      --ink-soft:#9AAABB;
+      --line:#223244;
+      --frio:#4FAEEA;
+      --frio-soft:#12314A;
+      --calor:#FF7E47;
+      --calor-soft:#3A2016;
+      --hero:#060C13;
+      --hero-ink:#EAF0F5;
+      --shadow:0 18px 40px -22px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme:dark;
+    --ground:#0B131D;
+    --surface:#121E2B;
+    --ink:#EAF0F5;
+    --ink-soft:#9AAABB;
+    --line:#223244;
+    --frio:#4FAEEA;
+    --frio-soft:#12314A;
+    --calor:#FF7E47;
+    --calor-soft:#3A2016;
+    --hero:#060C13;
+    --hero-ink:#EAF0F5;
+    --shadow:0 18px 40px -22px rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--ground);color:var(--ink);
+    font-family:var(--body);font-size:16px;line-height:1.6;
+  }
+  a{color:inherit}
+  h1,h2,h3{font-family:var(--display);line-height:1.05;margin:0;text-wrap:balance;letter-spacing:-.02em}
+  p{margin:0}
+  .wrap{max-width:1180px;margin-inline:auto;padding-inline:20px}
+  .mono{font-family:var(--mono);font-size:.78rem;letter-spacing:.04em}
+  .eyebrow{font-family:var(--mono);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--calor)}
+  :focus-visible{outline:3px solid var(--frio);outline-offset:3px;border-radius:6px}
+
+  /* ---------- Header ---------- */
+  .top{
+    position:sticky;top:env(safe-area-inset-top,0px);z-index:40;
+    background:color-mix(in srgb, var(--hero) 92%, transparent);
+    backdrop-filter:blur(10px);color:var(--hero-ink);
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:66px}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--display);font-weight:800;font-size:1.2rem}
+  .brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--frio) 0 50%,var(--calor) 50% 100%);display:grid;place-items:center}
+  .brand-mark svg{width:20px;height:20px}
+  .nav{display:flex;gap:26px;align-items:center}
+  .nav a{text-decoration:none;font-weight:500;opacity:.82;font-size:.95rem}
+  .nav a:hover{opacity:1}
+  .nav .btn-wa{opacity:1}
+  .menu-btn{display:none;background:none;border:1px solid rgba(255,255,255,.25);color:inherit;border-radius:10px;padding:8px 10px;cursor:pointer}
+  @media (max-width:860px){
+    .menu-btn{display:block}
+    .nav{position:absolute;top:66px;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;background:var(--hero);padding:8px 20px 20px;border-bottom:1px solid rgba(255,255,255,.1)}
+    .nav a{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+    .nav .btn-wa{margin-top:12px;justify-content:center;border:0}
+    .nav:not(.open){display:none}
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-weight:700;border-radius:999px;padding:14px 22px;font-size:1rem;border:0;cursor:pointer;transition:transform .15s ease, box-shadow .15s ease}
+  .btn:hover{transform:translateY(-2px)}
+  .btn svg{width:20px;height:20px;flex:none}
+  .btn-wa{background:var(--wa);color:var(--wa-ink);box-shadow:0 10px 24px -12px rgba(37,211,102,.8)}
+  .btn-ghost{background:transparent;color:var(--hero-ink);border:1.5px solid rgba(255,255,255,.3)}
+  .btn-sm{padding:9px 16px;font-size:.9rem}
+
+  /* ---------- Hero ---------- */
+  .hero{background:var(--hero);color:var(--hero-ink);position:relative;overflow:hidden;padding-block:72px 0}
+  .hero::before{
+    content:"";position:absolute;inset:-40% -10% auto auto;width:620px;height:620px;border-radius:50%;
+    background:radial-gradient(circle, color-mix(in srgb,var(--calor) 35%, transparent), transparent 65%);
+    pointer-events:none;
+  }
+  .hero::after{
+    content:"";position:absolute;inset:auto auto -45% -15%;width:620px;height:620px;border-radius:50%;
+    background:radial-gradient(circle, color-mix(in srgb,var(--frio) 35%, transparent), transparent 65%);
+    pointer-events:none;
+  }
+  .hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.25fr .9fr;gap:48px;align-items:center}
+  .hero h1{font-size:clamp(2.6rem,6.4vw,5.2rem);font-weight:800;margin-block:14px 20px}
+  .hero h1 .c{color:var(--frio)}
+  .hero h1 .h{color:var(--calor)}
+  .hero .lead{font-size:1.15rem;max-width:34em;opacity:.85}
+  .hero-ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+  .hero-badges{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:28px;opacity:.8;font-size:.92rem}
+  .hero-badges span{display:inline-flex;align-items:center;gap:8px}
+  .hero-badges svg{width:18px;height:18px;color:var(--wa)}
+
+  .tech-card{
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:26px;
+    backdrop-filter:blur(6px);
+  }
+  .tech-card h3{font-size:1.15rem;margin-bottom:14px}
+  .diag{display:grid;gap:10px}
+  .diag-row{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.06);font-size:.94rem}
+  .diag-row b{font-family:var(--mono);font-weight:500;font-size:.85rem;white-space:nowrap}
+  .ok{color:var(--wa)} .warn{color:#FFC04D}
+  .tech-card .foot{margin-top:14px;font-size:.82rem;opacity:.65}
+
+  /* thermometer strip: the thesis */
+  .scale{position:relative;z-index:1;margin-top:64px;padding-bottom:26px}
+  .scale-bar{height:12px;border-radius:999px;background:linear-gradient(90deg,#2F9BE0 0%,#7CC7F0 18%,#D7E3EA 38%,#F6B38E 62%,var(--calor) 82%,#C3321A 100%)}
+  .scale-ticks{display:flex;justify-content:space-between;margin-top:10px;gap:6px}
+  .scale-ticks div{display:flex;flex-direction:column;align-items:flex-start;font-size:.8rem;opacity:.8;min-width:0}
+  .scale-ticks div:last-child{align-items:flex-end;text-align:right}
+  .scale-ticks b{font-family:var(--mono);font-weight:500;font-size:.8rem;opacity:1}
+  @media (max-width:640px){ .scale-ticks div:nth-child(2), .scale-ticks div:nth-child(4){display:none} }
+
+  @media (max-width:900px){ .hero-grid{grid-template-columns:1fr} .hero{padding-block:48px 0} }
+
+  /* ---------- Stats ---------- */
+  .stats{background:var(--surface);border-bottom:1px solid var(--line)}
+  .stats .wrap{display:grid;grid-template-columns:repeat(4,1fr)}
+  .stat{padding:26px 18px;border-left:1px solid var(--line)}
+  .stat:first-child{border-left:0}
+  .stat strong{display:block;font-family:var(--display);font-size:2rem;font-weight:800;font-variant-numeric:tabular-nums}
+  .stat span{color:var(--ink-soft);font-size:.92rem}
+  @media (max-width:760px){
+    .stats .wrap{grid-template-columns:1fr 1fr}
+    .stat:nth-child(3){border-left:0}
+    .stat:nth-child(n+3){border-top:1px solid var(--line)}
+  }
+
+  /* ---------- Sections ---------- */
+  section.block{padding-block:88px}
+  .head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+  .head h2{font-size:clamp(2rem,4.2vw,3.1rem);font-weight:800;margin-top:10px}
+  .head p{color:var(--ink-soft);max-width:30em}
+
+  /* ---------- Catalog ---------- */
+  .tools{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:28px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{
+    border:1.5px solid var(--line);background:var(--surface);color:var(--ink);
+    border-radius:999px;padding:8px 16px;font:600 .92rem var(--body);cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;transition:border-color .15s, background .15s;
+  }
+  .chip i{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .chip[aria-pressed="true"]{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+  .search{margin-left:auto;position:relative;flex:1 1 220px;max-width:320px}
+  .search input{
+    width:100%;padding:11px 14px 11px 40px;border-radius:999px;border:1.5px solid var(--line);
+    background:var(--surface);color:var(--ink);font:500 .95rem var(--body);
+  }
+  .search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--ink-soft)}
+  @media (max-width:640px){ .search{margin-left:0;max-width:none} }
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+  .item{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px;display:flex;flex-direction:column;gap:14px;
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s;
+  }
+  .item:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:transparent}
+  .item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .ico{width:54px;height:54px;border-radius:14px;display:grid;place-items:center}
+  .ico svg{width:30px;height:30px}
+  .t-frio .ico{background:var(--frio-soft);color:var(--frio)}
+  .t-calor .ico{background:var(--calor-soft);color:var(--calor)}
+  .t-lavado .ico{background:color-mix(in srgb,var(--frio) 12%, var(--calor-soft));color:var(--ink)}
+  .t-hogar .ico{background:color-mix(in srgb,var(--ink) 8%, var(--surface));color:var(--ink)}
+  .spec{font-family:var(--mono);font-size:.72rem;color:var(--ink-soft);border:1px solid var(--line);border-radius:6px;padding:3px 7px;white-space:nowrap}
+  .item h3{font-size:1.3rem;font-weight:700}
+  .item ul{margin:0;padding:0;list-style:none;display:grid;gap:6px;color:var(--ink-soft);font-size:.93rem}
+  .item li{display:flex;gap:8px;align-items:baseline}
+  .item li::before{content:"";width:6px;height:6px;border-radius:2px;background:currentColor;opacity:.5;flex:none;transform:translateY(-2px)}
+  .item .more{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:14px;border-top:1px dashed var(--line)}
+  .item .more span{font-size:.85rem;color:var(--ink-soft)}
+  .ask{
+    text-decoration:none;font-weight:700;font-size:.9rem;display:inline-flex;gap:7px;align-items:center;
+    color:var(--wa-ink);background:var(--wa);padding:8px 14px;border-radius:999px;white-space:nowrap
+  }
+  .ask svg{width:16px;height:16px}
+  .empty{padding:40px;text-align:center;color:var(--ink-soft);border:1.5px dashed var(--line);border-radius:var(--radius)}
+
+  /* ---------- Galería ---------- */
+  .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+  .shot{
+    position:relative;margin:0;border-radius:var(--radius);overflow:hidden;aspect-ratio:4/3;max-width:100%;
+    background:var(--surface);border:1px solid var(--line);cursor:zoom-in;padding:0;font:inherit;color:inherit;text-align:left;
+  }
+  .shot img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s ease}
+  .shot:hover img{transform:scale(1.05)}
+  .shot figcaption{
+    position:absolute;inset:auto 0 0 0;padding:28px 14px 12px;color:#fff;font-weight:600;font-size:.93rem;
+    background:linear-gradient(transparent,rgba(8,14,22,.82));display:flex;justify-content:space-between;gap:8px;align-items:flex-end;
+  }
+  .shot figcaption .mono{opacity:.8;font-size:.7rem;white-space:nowrap}
+  .shot.ph{cursor:default;display:grid;place-items:center;
+    background:repeating-linear-gradient(135deg,var(--surface) 0 14px,color-mix(in srgb,var(--line) 45%,var(--surface)) 14px 28px)}
+  .shot.ph .ph-in{display:grid;justify-items:center;gap:8px;color:var(--ink-soft);text-align:center;padding:16px}
+  .shot.ph svg{width:40px;height:40px}
+  .shot.ph figcaption{background:linear-gradient(transparent,color-mix(in srgb,var(--ink) 70%,transparent))}
+  .gallery-note{margin-top:18px;color:var(--ink-soft);font-size:.92rem;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .lightbox{border:0;padding:0;background:transparent;max-width:min(1000px,92vw);max-height:90vh}
+  .lightbox::backdrop{background:rgba(6,12,19,.88)}
+  .lightbox img{max-width:100%;max-height:78vh;border-radius:12px;display:block;margin-inline:auto}
+  .lightbox p{color:#fff;text-align:center;margin-top:12px;font-weight:600}
+  .lb-bar{display:flex;justify-content:center;gap:10px;margin-top:12px}
+  .lb-bar button{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:8px 16px;font:600 .9rem var(--body);cursor:pointer}
+
+  /* ---------- Process ---------- */
+  .process{background:var(--surface);border-block:1px solid var(--line)}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;counter-reset:s}
+  .step{padding:8px 26px 8px 0;position:relative}
+  .step + .step{padding-left:26px;border-left:1px solid var(--line)}
+  .step .n{font-family:var(--mono);font-size:.8rem;color:var(--calor)}
+  .step h3{font-size:1.3rem;margin-block:10px 8px}
+  .step p{color:var(--ink-soft);font-size:.95rem}
+  @media (max-width:860px){
+    .steps{grid-template-columns:1fr 1fr;gap:28px 0}
+    .step:nth-child(3){border-left:0;padding-left:0}
+  }
+  @media (max-width:520px){
+    .steps{grid-template-columns:1fr}
+    .step + .step{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:24px}
+  }
+
+  /* ---------- Brands ---------- */
+  .brands{display:flex;flex-wrap:wrap;gap:10px}
+  .brands span{font-family:var(--display);font-weight:700;font-size:1.05rem;padding:10px 18px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft)}
+
+  /* ---------- FAQ ---------- */
+  .faq-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:48px}
+  details{border-bottom:1px solid var(--line);padding-block:18px}
+  details:first-child{border-top:1px solid var(--line)}
+  summary{cursor:pointer;font-weight:700;font-size:1.08rem;list-style:none;display:flex;justify-content:space-between;gap:16px}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";font-family:var(--mono);color:var(--calor);font-size:1.3rem;line-height:1}
+  details[open] summary::after{content:"–"}
+  details p{margin-top:10px;color:var(--ink-soft);max-width:60ch}
+  @media (max-width:860px){ .faq-grid{grid-template-columns:1fr;gap:24px} }
+
+  /* ---------- Contact ---------- */
+  .contact{background:var(--hero);color:var(--hero-ink);border-radius:28px;padding:48px;display:grid;grid-template-columns:1fr 1fr;gap:44px;position:relative;overflow:hidden}
+  .contact h2{font-size:clamp(2rem,4vw,3rem);font-weight:800;margin-block:10px 16px}
+  .contact .lead{opacity:.8;max-width:30em}
+  .channels{display:grid;gap:10px;margin-top:28px}
+  .channel{display:flex;align-items:center;gap:14px;text-decoration:none;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);transition:background .15s}
+  .channel:hover{background:rgba(255,255,255,.1)}
+  .channel svg{width:22px;height:22px;flex:none}
+  .channel small{display:block;opacity:.6;font-size:.8rem}
+  form{display:grid;gap:14px;align-content:start}
+  label{font-size:.85rem;font-weight:600;opacity:.85;display:grid;gap:6px}
+  input, select, textarea{font:500 1rem var(--body)}
+  form input, form select, form textarea{
+    width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.06);color:var(--hero-ink);
+  }
+  form select option{color:#0F1B2A}
+  form textarea{resize:vertical;min-height:96px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  form .btn-wa{justify-content:center;margin-top:4px}
+  .note{font-size:.8rem;opacity:.6}
+  @media (max-width:860px){ .contact{grid-template-columns:1fr;padding:32px 22px} }
+  @media (max-width:480px){ .row2{grid-template-columns:1fr} }
+
+  /* ---------- Footer ---------- */
+  footer{padding-block:56px 110px;color:var(--ink-soft);font-size:.92rem}
+  .foot-grid{display:flex;justify-content:space-between;gap:28px;flex-wrap:wrap;align-items:flex-start}
+  .socials{display:flex;gap:10px}
+  .socials a{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;border:1px solid var(--line);background:var(--surface);color:var(--ink);transition:transform .15s, background .15s, color .15s}
+  .socials a:hover{transform:translateY(-3px);background:var(--ink);color:var(--ground)}
+  .socials svg{width:20px;height:20px}
+
+  /* ---------- Floating WhatsApp ---------- */
+  .wa-float{
+    position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:60;
+    display:flex;align-items:center;gap:10px;text-decoration:none;
+  }
+  .wa-float .bubble{
+    background:var(--surface);color:var(--ink);border:1px solid var(--line);box-shadow:var(--shadow);
+    padding:10px 14px;border-radius:14px 14px 4px 14px;font-size:.9rem;font-weight:600;
+    transform-origin:right center;animation:pop .5s 1.2s both;
+  }
+  .wa-float .bubble small{display:block;font-weight:500;color:var(--ink-soft);font-size:.78rem}
+  .wa-float .dot{
+    width:62px;height:62px;border-radius:50%;background:var(--wa);display:grid;place-items:center;position:relative;
+    box-shadow:0 14px 30px -10px rgba(37,211,102,.9);transition:transform .2s;
+  }
+  .wa-float:hover .dot{transform:scale(1.08) rotate(-6deg)}
+  .wa-float .dot svg{width:34px;height:34px;color:#fff}
+  .wa-float .dot::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--wa);animation:ring 2.2s infinite}
+  @keyframes ring{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.6);opacity:0}}
+  @keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+  @media (max-width:520px){ .wa-float .bubble{display:none} }
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  }
+</style>
+</head>
+<body>
+
+<!-- Íconos reutilizables -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.15h-.01a8.23 8.23 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.13-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.42h-.48c-.17 0-.43.06-.66.31-.22.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.29Z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m5 12.5 4.2 4.2L19 7"/></symbol>
+  <symbol id="i-ig" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none"/></g></symbol>
+  <symbol id="i-fb" viewBox="0 0 24 24"><path fill="currentColor" d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.87.25-1.46 1.5-1.46h1.6V4.46A21 21 0 0 0 14.3 4.3c-2.3 0-3.9 1.4-3.9 4v2.2H7.8v3h2.6V21h3.1Z"/></symbol>
+  <symbol id="i-tt" viewBox="0 0 24 24"><path fill="currentColor" d="M16.6 3c.3 2.2 1.6 3.6 3.9 3.8v2.9a7 7 0 0 1-3.8-1.2v6.3c0 3.9-3.2 6.2-6.3 6.2A6 6 0 0 1 4.3 15c0-3.9 3.4-6.5 7.2-5.9v3.1c-1.9-.4-3.9.6-3.9 2.7 0 1.6 1.3 2.8 2.8 2.8 1.7 0 2.9-1.2 2.9-3.2V3h3.3Z"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z"/><circle cx="12" cy="10" r="2.4"/></g></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" d="M5 3.5h3.2l1.6 4.3-2.1 1.3a11 11 0 0 0 5.2 5.2l1.3-2.1 4.3 1.6V17a2 2 0 0 1-2.1 2A15.5 15.5 0 0 1 3 5.6 2 2 0 0 1 5 3.5Z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></g></symbol>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#inicio" aria-label="FríoCalor Service, inicio">
+      <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.1-.8-.8-2.1 2.4-2.6Z"/></svg></span>
+      FríoCalor
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="nav" aria-label="Abrir menú">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="nav" id="nav">
+      <a href="#catalogo">Catálogo</a>
+      <a href="#trabajos">Trabajos</a>
+      <a href="#como">Cómo trabajo</a>
+      <a href="#preguntas">Preguntas</a>
+      <a href="#contacto">Contacto</a>
+      <a class="btn btn-wa btn-sm" data-wa="Hola! Quiero pedir un presupuesto." href="#contacto"><svg><use href="#i-wa"/></svg>WhatsApp</a>
+    </nav>
+  </div>
+</header>
+
+<main id="inicio">
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow">Servicio técnico a domicilio</span>
+          <h1>Del <span class="c">freezer</span> al <span class="h">horno</span>, lo dejamos andando.</h1>
+          <p class="lead">Reparación de heladeras, cocinas, lavarropas, aires acondicionados y más. Diagnóstico en tu casa, repuestos originales y garantía escrita en cada trabajo.</p>
+          <div class="hero-ctas">
+            <a class="btn btn-wa" data-wa="Hola! Necesito un técnico. Mi electrodoméstico es: " href="#contacto"><svg><use href="#i-wa"/></svg>Pedir presupuesto</a>
+            <a class="btn btn-ghost" href="#catalogo">Ver qué reparamos</a>
+          </div>
+          <div class="hero-badges">
+            <span><svg><use href="#i-check"/></svg>Presupuesto sin cargo</span>
+            <span><svg><use href="#i-check"/></svg>Garantía de 90 días</span>
+            <span><svg><use href="#i-check"/></svg>Visitas en el día</span>
+          </div>
+        </div>
+
+        <aside class="tech-card" aria-label="Ejemplo de diagnóstico">
+          <span class="eyebrow" style="color:var(--frio)">Orden de trabajo · ejemplo</span>
+          <h3 style="margin-top:8px">Heladera No Frost · no enfría</h3>
+          <div class="diag">
+            <div class="diag-row"><span>Temperatura freezer</span><b class="warn">−4 °C</b></div>
+            <div class="diag-row"><span>Sensor de deshielo</span><b class="warn">abierto</b></div>
+            <div class="diag-row"><span>Compresor / gas R-600a</span><b class="ok">OK</b></div>
+            <div class="diag-row"><span>Después de la reparación</span><b class="ok">−18 °C</b></div>
+          </div>
+          <p class="foot">Así te explicamos cada arreglo: qué falló, qué se cambió y cómo quedó.</p>
+        </aside>
+      </div>
+
+      <div class="scale" aria-hidden="true">
+        <div class="scale-bar"></div>
+        <div class="scale-ticks">
+          <div><b>−18 °C</b>Freezer</div>
+          <div><b>4 °C</b>Heladera</div>
+          <div><b>24 °C</b>Aire acond.</div>
+          <div><b>60 °C</b>Termotanque</div>
+          <div><b>250 °C</b>Horno</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= STATS ================= -->
+  <div class="stats">
+    <div class="wrap">
+      <div class="stat"><strong>+15</strong><span>años de oficio</span></div>
+      <div class="stat"><strong>+3.000</strong><span>equipos reparados</span></div>
+      <div class="stat"><strong>90 días</strong><span>de garantía escrita</span></div>
+      <div class="stat"><strong>24 h</strong><span>tiempo de respuesta</span></div>
+    </div>
+  </div>
+
+  <!-- ================= CATÁLOGO ================= -->
+  <section class="block" id="catalogo">
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <span class="eyebrow">Catálogo de servicios</span>
+          <h2>¿Qué se te rompió?</h2>
+        </div>
+        <p>Elegí tu equipo y consultá directo por WhatsApp. El mensaje ya sale escrito, solo contanos la marca y qué le pasa.</p>
+      </div>
+
+      <div class="tools">
+        <div class="chips" role="group" aria-label="Filtrar por tipo">
+          <button class="chip" data-f="todos" aria-pressed="true">Todos</button>
+          <button class="chip" data-f="frio" aria-pressed="false"><i style="background:var(--frio)"></i>Frío</button>
+          <button class="chip" data-f="calor" aria-pressed="false"><i style="background:var(--calor)"></i>Calor</button>
+          <button class="chip" data-f="lavado" aria-pressed="false"><i style="background:var(--ink-soft)"></i>Lavado</button>
+          <button class="chip" data-f="hogar" aria-pressed="false"><i style="background:var(--ink)"></i>Pequeños</button>
+        </div>
+        <label class="search" for="q" style="opacity:1;display:block">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="q" type="search" placeholder="Buscar: heladera, gas, no calienta…" autocomplete="off" aria-label="Buscar en el catálogo">
+        </label>
+      </div>
+
+      <div class="grid" id="grid"></div>
+      <p class="empty" id="empty" hidden>No encontramos ese equipo en la lista, pero escribinos igual: <a data-wa="Hola! Quería consultar por un equipo que no está en la lista: " href="#contacto">consultar por WhatsApp</a>.</p>
+    </div>
+  </section>
+
+  <!-- ================= GALERÍA ================= -->
+  <section class="block" id="trabajos" style="padding-top:0">
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <span class="eyebrow">Trabajos realizados</span>
+          <h2>Equipos que volvieron a andar</h2>
+        </div>
+        <p>Fotos reales de reparaciones en casas y comercios. Tocá una para verla en grande.</p>
+      </div>
+      <div class="gallery" id="gallery"></div>
+      <p class="gallery-note">¿Tenés una foto o video de tu equipo roto? Mandalo por WhatsApp y te damos un diagnóstico preliminar.
+        <a class="ask" data-wa="Hola! Te mando una foto de mi equipo para que lo veas: " href="#contacto"><svg><use href="#i-wa"/></svg>Enviar foto</a></p>
+    </div>
+  </section>
+
+  <dialog class="lightbox" id="lightbox" aria-label="Foto ampliada">
+    <img id="lb-img" alt="">
+    <p id="lb-cap"></p>
+    <div class="lb-bar">
+      <button type="button" id="lb-prev" aria-label="Foto anterior">← Anterior</button>
+      <button type="button" id="lb-close">Cerrar</button>
+      <button type="button" id="lb-next" aria-label="Foto siguiente">Siguiente →</button>
+    </div>
+  </dialog>
+
+  <!-- ================= PROCESO ================= -->
+  <section class="block process" id="como">
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <span class="eyebrow">Cómo trabajo</span>
+          <h2>Sin vueltas, en cuatro pasos</h2>
+        </div>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="n">PASO 1</span><h3>Escribís</h3><p>Mandás un WhatsApp con el equipo, la marca y una foto o video de la falla.</p></div>
+        <div class="step"><span class="n">PASO 2</span><h3>Diagnóstico</h3><p>Coordinamos la visita. Revisamos el equipo en tu casa y te decimos qué tiene.</p></div>
+        <div class="step"><span class="n">PASO 3</span><h3>Presupuesto</h3><p>Precio cerrado antes de empezar. Si no te conviene, no hay compromiso.</p></div>
+        <div class="step"><span class="n">PASO 4</span><h3>Reparación</h3><p>Lo dejamos funcionando, probado y con garantía escrita de 90 días.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MARCAS ================= -->
+  <section class="block" style="padding-bottom:0">
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <span class="eyebrow">Marcas</span>
+          <h2>Trabajamos con todas</h2>
+        </div>
+        <p>Nacionales e importadas, modelos nuevos y antiguos.</p>
+      </div>
+      <div class="brands">
+        <span>Whirlpool</span><span>Samsung</span><span>LG</span><span>Gafa</span><span>Drean</span><span>Patrick</span><span>Electrolux</span><span>Longvie</span><span>Orbis</span><span>Philco</span><span>Bosch</span><span>Mabe</span><span>Candy</span><span>BGH</span><span>Surrey</span><span>Rheem</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <section class="block" id="preguntas">
+    <div class="wrap faq-grid">
+      <div>
+        <span class="eyebrow">Preguntas frecuentes</span>
+        <h2 style="font-size:clamp(2rem,4.2vw,3.1rem);font-weight:800;margin-top:10px">Lo que siempre nos preguntan</h2>
+      </div>
+      <div>
+        <details open><summary>¿Cobran la visita?</summary><p>El presupuesto es sin cargo. Si decidís no hacer la reparación, solo se cobra una visita mínima que se descuenta si después hacés el arreglo.</p></details>
+        <details><summary>¿Qué zonas cubren?</summary><p>Trabajamos en toda la ciudad y alrededores. Escribinos tu barrio por WhatsApp y te confirmamos el horario.</p></details>
+        <details><summary>¿Usan repuestos originales?</summary><p>Sí, siempre que existan. Si hay una alternativa más económica te la ofrecemos y vos elegís.</p></details>
+        <details><summary>¿Cómo funciona la garantía?</summary><p>Cada trabajo lleva garantía escrita de 90 días sobre la mano de obra y los repuestos colocados.</p></details>
+        <details><summary>¿Qué medios de pago aceptan?</summary><p>Efectivo, transferencia y Mercado Pago.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CONTACTO ================= -->
+  <section class="block" id="contacto" style="padding-top:0">
+    <div class="wrap">
+      <div class="contact">
+        <div>
+          <span class="eyebrow">Contacto</span>
+          <h2>Contanos qué le pasa a tu equipo</h2>
+          <p class="lead">Completá el formulario y se abre WhatsApp con el mensaje listo para enviar. Respondemos en minutos en horario de atención.</p>
+          <div class="channels">
+            <a class="channel" data-wa="Hola! Quiero pedir un presupuesto." href="#contacto"><svg style="color:var(--wa)"><use href="#i-wa"/></svg><span><small>WhatsApp</small><span class="js-phone">+54 9 11 0000-0000</span></span></a>
+            <div class="channel"><svg><use href="#i-clock"/></svg><span><small>Horario</small>Lunes a sábado · 8 a 20 h</span></div>
+            <a class="channel" data-social="maps" href="#" target="_blank" rel="noopener"><svg><use href="#i-map"/></svg><span><small>Zona de cobertura</small>Ciudad y alrededores · ver en Maps</span></a>
+          </div>
+        </div>
+
+        <form id="form" novalidate>
+          <div class="row2">
+            <label for="f-nombre">Tu nombre<input id="f-nombre" name="nombre" placeholder="Ej: Laura" autocomplete="given-name"></label>
+            <label for="f-barrio">Barrio / zona<input id="f-barrio" name="barrio" placeholder="Ej: Caballito"></label>
+          </div>
+          <div class="row2">
+            <label for="f-equipo">Equipo<select id="f-equipo" name="equipo"></select></label>
+            <label for="f-marca">Marca<input id="f-marca" name="marca" placeholder="Ej: Whirlpool"></label>
+          </div>
+          <label for="f-falla">¿Qué le pasa?<textarea id="f-falla" name="falla" placeholder="Ej: No enfría abajo, el freezer sí. Hace ruido al arrancar."></textarea></label>
+          <a class="btn btn-wa" id="f-send" href="#" target="_blank" rel="noopener"><svg><use href="#i-wa"/></svg>Enviar por WhatsApp</a>
+          <p class="note">No guardamos tus datos: el mensaje se envía directo desde tu WhatsApp.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot-grid">
+    <div>
+      <a class="brand" href="#inicio" style="color:var(--ink)"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.1-.8-.8-2.1 2.4-2.6Z"/></svg></span>FríoCalor Service</a>
+      <p style="margin-top:10px">Reparación de electrodomésticos a domicilio.<br>© <span id="year">2026</span> · Todos los derechos reservados.</p>
+    </div>
+    <div>
+      <p style="margin-bottom:10px;font-weight:600;color:var(--ink)">Seguinos</p>
+      <div class="socials">
+        <a data-social="instagram" href="#" target="_blank" rel="noopener" aria-label="Instagram"><svg><use href="#i-ig"/></svg></a>
+        <a data-social="facebook" href="#" target="_blank" rel="noopener" aria-label="Facebook"><svg><use href="#i-fb"/></svg></a>
+        <a data-social="tiktok" href="#" target="_blank" rel="noopener" aria-label="TikTok"><svg><use href="#i-tt"/></svg></a>
+        <a data-social="maps" href="#" target="_blank" rel="noopener" aria-label="Google Maps"><svg><use href="#i-map"/></svg></a>
+        <a data-wa="Hola! Quiero pedir un presupuesto." href="#contacto" aria-label="WhatsApp"><svg><use href="#i-wa"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<a class="wa-float" data-wa="Hola! Vi la página y quiero consultar por una reparación." href="#contacto" aria-label="Escribinos por WhatsApp">
+  <span class="bubble">¿Se te rompió algo?<small>Escribinos, respondemos rápido</small></span>
+  <span class="dot"><svg><use href="#i-wa"/></svg></span>
+</a>
+
+<script>
+/* ============================================================
+   CONFIGURACIÓN — cambiá estos datos por los reales
+   ============================================================ */
+const CONFIG = {
+  whatsapp: "5491100000000",            // código país + área + número, sin "+" ni espacios
+  telefonoVisible: "+54 9 11 0000-0000",
+  instagram: "https://instagram.com/tu_usuario",
+  facebook:  "https://facebook.com/tu_pagina",
+  tiktok:    "https://tiktok.com/@tu_usuario",
+  maps:      "https://maps.google.com/?q=Buenos+Aires"
+};
+
+/* Catálogo: agregá, quitá o editá equipos acá */
+const CATALOGO = [
+  { tipo:"frio",  nombre:"Heladeras",            spec:"R-134a · R-600a", fallas:["No enfría o enfría poco","Carga de gas y fugas","Cambio de burletes","Plaqueta y sensores No Frost"], icon:"fridge" },
+  { tipo:"frio",  nombre:"Freezers",             spec:"−18 °C",          fallas:["No congela","Escarcha excesiva","Termostato","Motor compresor"], icon:"freezer" },
+  { tipo:"frio",  nombre:"Aire acondicionado",   spec:"R-410a · R-32",   fallas:["Instalación y desinstalación","Carga de gas","Limpieza y service","Pierde agua"], icon:"ac" },
+  { tipo:"frio",  nombre:"Exhibidoras y bebederos", spec:"Comercial",    fallas:["Heladeras comerciales","Dispensers de agua","Cámaras chicas","Mantenimiento preventivo"], icon:"display" },
+  { tipo:"calor", nombre:"Cocinas y hornos",     spec:"Gas · Eléctricas", fallas:["Horno no calienta","Encendido y chispero","Válvulas de seguridad","Termostato y termocupla"], icon:"stove" },
+  { tipo:"calor", nombre:"Anafes",               spec:"Gas · Vitro · Inducción", fallas:["Hornallas que no prenden","Llama amarilla","Placas de inducción","Perillas y válvulas"], icon:"cooktop" },
+  { tipo:"calor", nombre:"Termotanques",         spec:"60 °C",           fallas:["No calienta el agua","Piloto se apaga","Cambio de ánodo","Pérdidas"], icon:"heater" },
+  { tipo:"calor", nombre:"Calefones y calefactores", spec:"Tiro balanceado", fallas:["No enciende","Poca presión","Service anual","Limpieza de quemadores"], icon:"flame" },
+  { tipo:"lavado",nombre:"Lavarropas",           spec:"Automático · Semi", fallas:["No centrifuga","No carga o no desagota","Rulemanes y ruidos","Plaqueta y programador"], icon:"washer" },
+  { tipo:"lavado",nombre:"Secarropas",           spec:"Centrífugo · Calor", fallas:["No gira","No calienta","Correa","Ruido fuerte"], icon:"dryer" },
+  { tipo:"lavado",nombre:"Lavavajillas",         spec:"Todas las marcas", fallas:["No lava bien","Pierde agua","No desagota","Errores en pantalla"], icon:"dish" },
+  { tipo:"hogar", nombre:"Microondas",           spec:"220 V · 50 Hz",  fallas:["No calienta","Plato no gira","Magnetrón","Panel y teclas"], icon:"micro" }
+];
+
+/* Galería de trabajos: subí las fotos a la carpeta "fotos/" y listalas acá.
+   icon = ícono que se muestra si la foto todavía no existe (mismos nombres que en CATALOGO). */
+const GALERIA = [
+  { foto:"fotos/heladera-1.jpg",    titulo:"Heladera No Frost · cambio de sensor", equipo:"Heladera",    icon:"fridge" },
+  { foto:"fotos/cocina-1.jpg",      titulo:"Cocina a gas · válvula de horno",      equipo:"Cocina",      icon:"stove" },
+  { foto:"fotos/lavarropas-1.jpg",  titulo:"Lavarropas · cambio de rulemanes",     equipo:"Lavarropas",  icon:"washer" },
+  { foto:"fotos/aire-1.jpg",        titulo:"Split 3000 frig · carga de gas",       equipo:"Aire acond.", icon:"ac" },
+  { foto:"fotos/termotanque-1.jpg", titulo:"Termotanque · cambio de termocupla",   equipo:"Termotanque", icon:"heater" },
+  { foto:"fotos/microondas-1.jpg",  titulo:"Microondas · magnetrón nuevo",         equipo:"Microondas",  icon:"micro" }
+];
+
+/* Íconos de línea para cada equipo */
+const ICONS = {
+  fridge:'<rect x="6" y="2.5" width="12" height="19" rx="2"/><path d="M6 9.5h12M9 5.5v2M9 12.5v3"/>',
+  freezer:'<rect x="3" y="8" width="18" height="11" rx="2"/><path d="M3 11.5h18M8 14.5h3"/><path d="M12 2.5v4M10.3 3.5l3.4 2M13.7 3.5l-3.4 2"/>',
+  ac:'<rect x="2.5" y="5" width="19" height="8" rx="2"/><path d="M6 10h12M7 16.5c0 1.5 1 2.5 1 4M12 16.5v4M17 16.5c0 1.5-1 2.5-1 4"/>',
+  display:'<rect x="5" y="2.5" width="14" height="19" rx="2"/><path d="M5 17h14M8.5 6.5h7v7h-7z"/>',
+  stove:'<rect x="3.5" y="3" width="17" height="18" rx="2"/><path d="M3.5 8h17"/><circle cx="8" cy="5.5" r=".6"/><circle cx="12" cy="5.5" r=".6"/><circle cx="16" cy="5.5" r=".6"/><rect x="7" y="11" width="10" height="7" rx="1"/>',
+  cooktop:'<rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8" cy="10" r="2.5"/><circle cx="16" cy="10" r="2.5"/><circle cx="8" cy="15.5" r="1.4"/><circle cx="16" cy="15.5" r="1.4"/>',
+  heater:'<rect x="7" y="2.5" width="10" height="17" rx="5"/><path d="M12 19.5v2M10 8.5c1.5 1 1.5 2.5 0 3.5M14 8.5c1.5 1 1.5 2.5 0 3.5"/>',
+  flame:'<path d="M12 21.5c-3.6 0-6-2.4-6-5.7 0-3.6 2.8-5.3 3.6-8.8 1.9 1.4 2.9 3.2 2.8 5 1.2-.6 1.9-1.8 2-3 1.8 1.6 3.6 4 3.6 6.8 0 3.3-2.4 5.7-6 5.7Z"/>',
+  washer:'<rect x="4" y="2.5" width="16" height="19" rx="2"/><path d="M4 7h16"/><circle cx="12" cy="14" r="4.5"/><path d="M9.5 14.5c1-.8 2-.8 3 0s2 .8 3 0"/><circle cx="7.5" cy="4.8" r=".6"/>',
+  dryer:'<rect x="4" y="2.5" width="16" height="19" rx="2"/><path d="M4 7h16"/><circle cx="12" cy="14" r="4.5"/><path d="M12 11v6M9 14h6"/>',
+  dish:'<rect x="4" y="2.5" width="16" height="19" rx="2"/><path d="M4 7h16M8 11h8M8 14.5h8M8 18h8"/>',
+  micro:'<rect x="2.5" y="5" width="19" height="14" rx="2"/><rect x="5" y="7.5" width="10" height="9" rx="1"/><path d="M18 8.5v1M18 12v1M18 15.5v1"/>'
+};
+
+const waLink = (msg) => `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(msg)}`;
+
+/* Links de WhatsApp y redes */
+function wireLinks(root = document){
+  root.querySelectorAll("[data-wa]").forEach(a => {
+    a.href = waLink(a.dataset.wa);
+    a.target = "_blank"; a.rel = "noopener";
+  });
+}
+document.querySelectorAll("[data-social]").forEach(a => { a.href = CONFIG[a.dataset.social] || "#"; });
+document.querySelectorAll(".js-phone").forEach(el => el.textContent = CONFIG.telefonoVisible);
+document.getElementById("year").textContent = new Date().getFullYear();
+
+/* Render del catálogo */
+const grid = document.getElementById("grid");
+const empty = document.getElementById("empty");
+grid.innerHTML = CATALOGO.map(it => `
+  <article class="item t-${it.tipo}" data-tipo="${it.tipo}" data-text="${(it.nombre+" "+it.fallas.join(" ")+" "+it.spec).toLowerCase()}">
+    <div class="item-top">
+      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[it.icon]}</svg></span>
+      <span class="spec">${it.spec}</span>
+    </div>
+    <h3>${it.nombre}</h3>
+    <ul>${it.fallas.map(f => `<li>${f}</li>`).join("")}</ul>
+    <div class="more">
+      <span>Presupuesto sin cargo</span>
+      <a class="ask" data-wa="Hola! Necesito reparar mi ${it.nombre.toLowerCase()}. Marca: ___ . Falla: ___" href="#contacto"><svg><use href="#i-wa"/></svg>Consultar</a>
+    </div>
+  </article>`).join("");
+wireLinks();
+
+/* Filtros + búsqueda */
+let filtro = "todos";
+const q = document.getElementById("q");
+const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+function aplicar(){
+  const term = norm(q.value.trim());
+  let visibles = 0;
+  grid.querySelectorAll(".item").forEach(el => {
+    const ok = (filtro === "todos" || el.dataset.tipo === filtro) && (!term || norm(el.dataset.text).includes(term));
+    el.hidden = !ok; if (ok) visibles++;
+  });
+  empty.hidden = visibles > 0;
+}
+document.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
+  filtro = b.dataset.f;
+  document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", String(c === b)));
+  aplicar();
+}));
+q.addEventListener("input", aplicar);
+
+/* Formulario → mensaje de WhatsApp */
+const sel = document.getElementById("f-equipo");
+sel.innerHTML = CATALOGO.map(it => `<option>${it.nombre}</option>`).join("") + "<option>Otro</option>";
+const send = document.getElementById("f-send");
+function armarMensaje(){
+  const v = id => document.getElementById(id).value.trim();
+  const partes = [
+    `Hola! Soy ${v("f-nombre") || "___"}${v("f-barrio") ? " de " + v("f-barrio") : ""}.`,
+    `Equipo: ${v("f-equipo")}${v("f-marca") ? " (" + v("f-marca") + ")" : ""}.`,
+    v("f-falla") ? `Falla: ${v("f-falla")}` : "Quería pedir un presupuesto."
+  ];
+  send.href = waLink(partes.join("\n"));
+}
+document.getElementById("form").addEventListener("input", armarMensaje);
+document.getElementById("form").addEventListener("submit", e => e.preventDefault());
+armarMensaje();
+
+/* Galería + visor */
+const gallery = document.getElementById("gallery");
+const svgIcon = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[k] || ICONS.fridge}</svg>`;
+gallery.innerHTML = GALERIA.map((g, i) => `
+  <figure class="shot" data-i="${i}" tabindex="0" role="button" aria-label="Ver foto: ${g.titulo}">
+    <img src="${g.foto}" alt="${g.titulo}" loading="lazy">
+    <figcaption><span>${g.titulo}</span><span class="mono">${g.equipo}</span></figcaption>
+  </figure>`).join("");
+/* Si una foto no existe todavía, se muestra un marcador en su lugar */
+gallery.querySelectorAll(".shot img").forEach(img => {
+  const fig = img.closest(".shot"), g = GALERIA[fig.dataset.i];
+  img.addEventListener("error", () => {
+    fig.classList.add("ph"); fig.removeAttribute("role"); fig.removeAttribute("tabindex");
+    img.replaceWith(Object.assign(document.createElement("div"), { className:"ph-in", innerHTML: svgIcon(g.icon) + `<span class="mono">${g.foto}</span>` }));
+  });
+});
+const lb = document.getElementById("lightbox"), lbImg = document.getElementById("lb-img"), lbCap = document.getElementById("lb-cap");
+let lbIndex = 0;
+const conFoto = () => [...gallery.querySelectorAll(".shot:not(.ph)")].map(f => +f.dataset.i);
+function verFoto(i){
+  lbIndex = i; const g = GALERIA[i];
+  lbImg.src = g.foto; lbImg.alt = g.titulo; lbCap.textContent = g.titulo;
+  if (!lb.open) lb.showModal();
+}
+function mover(d){ const l = conFoto(); if (!l.length) return; verFoto(l[(l.indexOf(lbIndex) + d + l.length) % l.length]); }
+gallery.addEventListener("click", e => { const f = e.target.closest(".shot:not(.ph)"); if (f) verFoto(+f.dataset.i); });
+gallery.addEventListener("keydown", e => { const f = e.target.closest(".shot:not(.ph)"); if (f && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); verFoto(+f.dataset.i); } });
+document.getElementById("lb-close").addEventListener("click", () => lb.close());
+document.getElementById("lb-prev").addEventListener("click", () => mover(-1));
+document.getElementById("lb-next").addEventListener("click", () => mover(1));
+lb.addEventListener("click", e => { if (e.target === lb) lb.close(); });
+lb.addEventListener("keydown", e => { if (e.key === "ArrowLeft") mover(-1); if (e.key === "ArrowRight") mover(1); });
+
+/* Menú mobile */
+const menuBtn = document.getElementById("menuBtn"), nav = document.getElementById("nav");
+menuBtn.addEventListener("click", () => {
+  const open = nav.classList.toggle("open");
+  menuBtn.setAttribute("aria-expanded", String(open));
+});
+nav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => { nav.classList.remove("open"); menuBtn.setAttribute("aria-expanded","false"); }));
+</script>
+</body>
+</html>
