@@ -678,7 +678,7 @@ wireLinks();
 /* Filtros + búsqueda */
 let filtro = "todos";
 const q = document.getElementById("q");
-const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const norm = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 function aplicar(){
   const term = norm(q.value.trim());
   let visibles = 0;
