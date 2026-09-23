@@ -726,10 +726,13 @@ gallery.innerHTML = GALERIA.map((g, i) => `
 /* Si una foto no existe todavía, se muestra un marcador en su lugar */
 gallery.querySelectorAll(".shot img").forEach(img => {
   const fig = img.closest(".shot"), g = GALERIA[fig.dataset.i];
-  img.addEventListener("error", () => {
+  const marcador = () => {
+    if (!img.isConnected) return;
     fig.classList.add("ph"); fig.removeAttribute("role"); fig.removeAttribute("tabindex");
     img.replaceWith(Object.assign(document.createElement("div"), { className:"ph-in", innerHTML: svgIcon(g.icon) + `<span class="mono">${g.foto}</span>` }));
-  });
+  };
+  img.addEventListener("error", marcador);
+  if (img.complete && !img.naturalWidth) marcador();
 });
 const lb = document.getElementById("lightbox"), lbImg = document.getElementById("lb-img"), lbCap = document.getElementById("lb-cap");
 let lbIndex = 0;
