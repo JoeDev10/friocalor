@@ -460,9 +460,9 @@
       <div class="head">
         <div>
           <span class="eyebrow">Trabajos realizados</span>
-          <h2>Equipos que volvieron a andar</h2>
+          <h2>Los equipos que reparamos</h2>
         </div>
-        <p>Fotos reales de reparaciones en casas y comercios. Tocá una para verla en grande.</p>
+        <p>Fotos de muestra (Unsplash). En la versión final van fotos reales de los trabajos. Tocá una para verla en grande.</p>
       </div>
       <div class="gallery" id="gallery"></div>
       <p class="gallery-note">¿Tenés una foto o video de tu equipo roto? Mandalo por WhatsApp y te damos un diagnóstico preliminar.
@@ -617,15 +617,18 @@ const CATALOGO = [
   { tipo:"hogar", nombre:"Microondas",           spec:"220 V · 50 Hz",  fallas:["No calienta","Plato no gira","Magnetrón","Panel y teclas"], icon:"micro" }
 ];
 
-/* Galería de trabajos: subí las fotos a la carpeta "fotos/" y listalas acá.
+/* Galería: fotos de muestra de Unsplash. Para usar fotos propias, subilas a "fotos/" y poné foto:"fotos/archivo.jpg".
    icon = ícono que se muestra si la foto todavía no existe (mismos nombres que en CATALOGO). */
+const U = id => `https://images.unsplash.com/photo-${id}?w=900&q=75&auto=format&fit=crop`;
 const GALERIA = [
-  { foto:"fotos/heladera-1.jpg",    titulo:"Heladera No Frost · cambio de sensor", equipo:"Heladera",    icon:"fridge" },
-  { foto:"fotos/cocina-1.jpg",      titulo:"Cocina a gas · válvula de horno",      equipo:"Cocina",      icon:"stove" },
-  { foto:"fotos/lavarropas-1.jpg",  titulo:"Lavarropas · cambio de rulemanes",     equipo:"Lavarropas",  icon:"washer" },
-  { foto:"fotos/aire-1.jpg",        titulo:"Split 3000 frig · carga de gas",       equipo:"Aire acond.", icon:"ac" },
-  { foto:"fotos/termotanque-1.jpg", titulo:"Termotanque · cambio de termocupla",   equipo:"Termotanque", icon:"heater" },
-  { foto:"fotos/microondas-1.jpg",  titulo:"Microondas · magnetrón nuevo",         equipo:"Microondas",  icon:"micro" }
+  { foto:U("1588854337115-1c67d9247e4d"), titulo:"Heladera No Frost de dos puertas",  equipo:"Heladera",    icon:"fridge" },
+  { foto:U("1629234358103-5b5ee53ece9c"), titulo:"Anafe a gas de cuatro hornallas",   equipo:"Anafe",       icon:"cooktop" },
+  { foto:U("1626806787461-102c1bfaaea1"), titulo:"Lavarropas de carga frontal",       equipo:"Lavarropas",  icon:"washer" },
+  { foto:U("1623114112815-74a4b9fe505d"), titulo:"Cocina con horno a gas",            equipo:"Cocina",      icon:"stove" },
+  { foto:U("1726614846573-c1ac2e6161d1"), titulo:"Aire acondicionado split",          equipo:"Aire acond.", icon:"ac" },
+  { foto:U("1728509741559-44172bcd86b3"), titulo:"Llama azul: combustión correcta",   equipo:"Gas",         icon:"flame" },
+  { foto:U("1721563927724-74b1a0ddef33"), titulo:"Heladera con freezer",              equipo:"Heladera",    icon:"fridge" },
+  { foto:U("1626143508000-4b5904e5e84a"), titulo:"Microondas de acero",               equipo:"Microondas",  icon:"micro" }
 ];
 
 /* Íconos de línea para cada equipo */
