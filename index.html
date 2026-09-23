@@ -246,6 +246,37 @@
   .lb-bar{display:flex;justify-content:center;gap:10px;margin-top:12px}
   .lb-bar button{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:8px 16px;font:600 .9rem var(--body);cursor:pointer}
 
+  /* ---------- Tienda ---------- */
+  .tienda{background:var(--surface);border-block:1px solid var(--line);margin-bottom:88px}
+  .stock-toggle{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-size:.92rem;font-weight:600;opacity:1;cursor:pointer}
+  .stock-toggle input{width:18px;height:18px;accent-color:var(--frio)}
+  .productos{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px}
+  .prod{background:var(--ground);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:transform .2s ease, box-shadow .2s ease}
+  .prod:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .prod-media{position:relative;aspect-ratio:4/3;max-width:100%;overflow:hidden}
+  .prod-media img{width:100%;height:100%;object-fit:cover;display:block}
+  .prod-tile{width:100%;height:100%;display:grid;place-items:center;align-content:center;gap:10px;
+    background:radial-gradient(circle at 30% 25%, color-mix(in srgb,var(--tone) 22%, var(--surface)), color-mix(in srgb,var(--tone) 8%, var(--ground)) 70%);color:var(--tone)}
+  .prod-tile svg{width:74px;height:74px}
+  .prod-tile small{font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+  .t-frio{--tone:var(--frio)} .t-calor{--tone:var(--calor)} .t-lavado{--tone:#6B7F95} .t-hogar{--tone:var(--ink-soft)}
+  .badge{position:absolute;top:12px;left:12px;font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;padding:5px 9px;border-radius:6px;background:var(--ink);color:var(--ground)}
+  .estado{position:absolute;top:12px;right:12px;font-size:.78rem;font-weight:700;padding:5px 10px;border-radius:999px;background:var(--surface);border:1px solid var(--line)}
+  .estado.disponible{color:var(--ok)} .estado.reservado{color:#B7791F} .estado.vendido{color:var(--ink-soft)}
+  .prod.is-vendido .prod-media{filter:grayscale(1);opacity:.6}
+  .prod-body{padding:18px;display:flex;flex-direction:column;gap:10px;flex:1}
+  .prod-body h3{font-size:1.2rem}
+  .prod-spec{font-family:var(--mono);font-size:.74rem;color:var(--ink-soft)}
+  .prod-hecho{font-size:.9rem;color:var(--ink-soft)}
+  .prod-hecho strong{color:var(--ink);font-weight:600}
+  .prod-garantia{display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:600;color:var(--ok)}
+  .prod-garantia svg{width:16px;height:16px}
+  .prod-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:12px;border-top:1px dashed var(--line)}
+  .precio{font-family:var(--display);font-size:1.45rem;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+  .precio small{display:block;font-family:var(--body);font-size:.72rem;font-weight:500;color:var(--ink-soft);margin-top:4px}
+  .prod .ask[aria-disabled="true"]{background:var(--line);color:var(--ink-soft);pointer-events:none}
+  @media (max-width:640px){ .stock-toggle{margin-left:0} }
+
   /* ---------- Casos antes / después ---------- */
   .casos{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;margin-bottom:28px}
   .caso{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;display:flex;flex-direction:column;gap:14px}
@@ -382,6 +413,7 @@
     </button>
     <nav class="nav" id="nav">
       <a href="#catalogo">Catálogo</a>
+      <a href="#tienda">Tienda</a>
       <a href="#trabajos">Trabajos</a>
       <a href="#como">Cómo trabajo</a>
       <a href="#preguntas">Preguntas</a>
@@ -474,6 +506,30 @@
 
       <div class="grid" id="grid"></div>
       <p class="empty" id="empty" hidden>No encontramos ese equipo en la lista, pero escribinos igual: <a data-wa="Hola! Quería consultar por un equipo que no está en la lista: " href="#contacto">consultar por WhatsApp</a>.</p>
+    </div>
+  </section>
+
+  <!-- ================= TIENDA: REACONDICIONADOS ================= -->
+  <section class="block tienda" id="tienda">
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <span class="eyebrow">Tienda · equipos reacondicionados</span>
+          <h2>Usados, revisados y con garantía</h2>
+        </div>
+        <p>Cada equipo pasa por el taller: se desarma, se cambian las piezas gastadas y se prueba antes de venderlo. Entrega a domicilio.</p>
+      </div>
+      <div class="tools">
+        <div class="chips" role="group" aria-label="Filtrar equipos en venta">
+          <button class="chip" data-t="todos" aria-pressed="true">Todos</button>
+          <button class="chip" data-t="frio" aria-pressed="false"><i style="background:var(--frio)"></i>Heladeras y aires</button>
+          <button class="chip" data-t="calor" aria-pressed="false"><i style="background:var(--calor)"></i>Cocinas</button>
+          <button class="chip" data-t="lavado" aria-pressed="false"><i style="background:var(--ink-soft)"></i>Lavarropas</button>
+          <button class="chip" data-t="hogar" aria-pressed="false"><i style="background:var(--ink)"></i>Pequeños</button>
+        </div>
+        <label class="stock-toggle" for="solo-disp"><input type="checkbox" id="solo-disp"> Solo disponibles</label>
+      </div>
+      <div class="productos" id="productos"></div>
     </div>
   </section>
 
@@ -656,6 +712,20 @@ const CASOS = [
    { foto:"fotos/heladera-1.jpg", titulo:"Heladera No Frost · cambio de sensor", equipo:"Heladera", icon:"fridge" } */
 const GALERIA = [];
 
+/* Tienda: equipos reacondicionados en venta (datos de ejemplo).
+   estado: "disponible" | "reservado" | "vendido".  foto: "fotos/archivo.jpg" o "" para mostrar el ícono. */
+const PRODUCTOS = [
+  { tipo:"frio",   icon:"fridge",  nombre:"Heladera No Frost 375 L",       marca:"Whirlpool · 2 puertas · inox", hecho:"Sensor de deshielo y burletes nuevos",    garantia:"6 meses", precio:520000, estado:"disponible", foto:"" },
+  { tipo:"frio",   icon:"fridge",  nombre:"Heladera con freezer 340 L",    marca:"Gafa · cíclica · blanca",      hecho:"Termostato nuevo y carga de gas R-600a",   garantia:"6 meses", precio:390000, estado:"disponible", foto:"" },
+  { tipo:"frio",   icon:"freezer", nombre:"Freezer horizontal 300 L",      marca:"Gafa · dual frío/freezer",     hecho:"Motor ventilador y burlete de tapa",       garantia:"6 meses", precio:350000, estado:"reservado",  foto:"" },
+  { tipo:"frio",   icon:"ac",      nombre:"Aire split 3000 frigorías",     marca:"BGH · frío/calor · R-410a",    hecho:"Limpieza completa y carga de gas",         garantia:"6 meses", precio:480000, estado:"disponible", foto:"" },
+  { tipo:"calor",  icon:"stove",   nombre:"Cocina 4 hornallas 56 cm",      marca:"Longvie · gas natural",        hecho:"Válvulas de seguridad y termostato de horno", garantia:"6 meses", precio:310000, estado:"disponible", foto:"" },
+  { tipo:"calor",  icon:"stove",   nombre:"Cocina con encendido",          marca:"Orbis · gas envasado o natural", hecho:"Chispero y perillas nuevas",            garantia:"3 meses", precio:280000, estado:"vendido",    foto:"" },
+  { tipo:"lavado", icon:"washer",  nombre:"Lavarropas automático 8 kg",    marca:"Drean · carga frontal · 1000 rpm", hecho:"Rulemanes, retén y bomba de desagote", garantia:"6 meses", precio:420000, estado:"disponible", foto:"" },
+  { tipo:"lavado", icon:"washer",  nombre:"Lavarropas semiautomático 6 kg", marca:"Patrick · carga superior",    hecho:"Correa y timer nuevos",                    garantia:"3 meses", precio:150000, estado:"disponible", foto:"" },
+  { tipo:"hogar",  icon:"micro",   nombre:"Microondas 20 L",               marca:"Philco · 700 W",               hecho:"Magnetrón y plato giratorio nuevos",       garantia:"3 meses", precio:85000,  estado:"disponible", foto:"" }
+];
+
 /* Íconos de línea para cada equipo */
 const ICONS = {
   fridge:'<rect x="6" y="2.5" width="12" height="19" rx="2"/><path d="M6 9.5h12M9 5.5v2M9 12.5v3"/>',
@@ -716,9 +786,9 @@ function aplicar(){
   });
   empty.hidden = visibles > 0;
 }
-document.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
+document.querySelectorAll(".chip[data-f]").forEach(b => b.addEventListener("click", () => {
   filtro = b.dataset.f;
-  document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", String(c === b)));
+  document.querySelectorAll(".chip[data-f]").forEach(c => c.setAttribute("aria-pressed", String(c === b)));
   aplicar();
 }));
 q.addEventListener("input", aplicar);
@@ -739,6 +809,53 @@ function armarMensaje(){
 document.getElementById("form").addEventListener("input", armarMensaje);
 document.getElementById("form").addEventListener("submit", e => e.preventDefault());
 armarMensaje();
+
+/* Tienda */
+const precioAR = n => "$" + n.toLocaleString("es-AR");
+const ESTADOS = { disponible:"Disponible", reservado:"Reservado", vendido:"Vendido" };
+const iconSvg = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>`;
+const tile = p => `<div class="prod-tile">${iconSvg(p.icon)}<small>Foto real próximamente</small></div>`;
+const productos = document.getElementById("productos");
+productos.innerHTML = PRODUCTOS.map((p, i) => `
+  <article class="prod t-${p.tipo} is-${p.estado}" data-tipo="${p.tipo}" data-estado="${p.estado}" data-i="${i}">
+    <div class="prod-media">
+      ${p.foto ? `<img src="${p.foto}" alt="${p.nombre}" loading="lazy">` : tile(p)}
+      <span class="badge">Reacondicionado</span>
+      <span class="estado ${p.estado}">${ESTADOS[p.estado]}</span>
+    </div>
+    <div class="prod-body">
+      <h3>${p.nombre}</h3>
+      <span class="prod-spec">${p.marca}</span>
+      <p class="prod-hecho"><strong>Qué se le hizo:</strong> ${p.hecho}.</p>
+      <span class="prod-garantia"><svg><use href="#i-check"/></svg>Garantía ${p.garantia}</span>
+      <div class="prod-foot">
+        <span class="precio">${precioAR(p.precio)}<small>Efectivo o transferencia</small></span>
+        ${p.estado === "vendido"
+          ? `<a class="ask" aria-disabled="true">Vendido</a>`
+          : `<a class="ask" data-wa="Hola! Me interesa el equipo reacondicionado: ${p.nombre} (${p.marca}) a ${precioAR(p.precio)}. ¿Sigue disponible?" href="#contacto"><svg><use href="#i-wa"/></svg>Me interesa</a>`}
+      </div>
+    </div>
+  </article>`).join("");
+productos.querySelectorAll(".prod-media img").forEach(img => {
+  const p = PRODUCTOS[img.closest(".prod").dataset.i];
+  const aIcono = () => { if (img.isConnected) img.outerHTML = tile(p); };
+  img.addEventListener("error", aIcono);
+  if (img.complete && !img.naturalWidth) aIcono();
+});
+wireLinks(productos);
+let filtroT = "todos";
+const soloDisp = document.getElementById("solo-disp");
+function filtrarTienda(){
+  productos.querySelectorAll(".prod").forEach(el => {
+    el.hidden = !((filtroT === "todos" || el.dataset.tipo === filtroT) && (!soloDisp.checked || el.dataset.estado === "disponible"));
+  });
+}
+document.querySelectorAll("[data-t]").forEach(b => b.addEventListener("click", () => {
+  filtroT = b.dataset.t;
+  document.querySelectorAll("[data-t]").forEach(c => c.setAttribute("aria-pressed", String(c === b)));
+  filtrarTienda();
+}));
+soloDisp.addEventListener("change", filtrarTienda);
 
 /* Casos antes / después */
 document.getElementById("casos").innerHTML = CASOS.map(c => `
