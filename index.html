@@ -21,6 +21,7 @@
     --calor-soft:#FDEBE2;
     --wa:#25D366;
     --wa-ink:#063B1E;
+    --ok:#13804A;
     --hero:#0F1B2A;
     --hero-ink:#F3F6F8;
     --shadow:0 18px 40px -22px rgba(15,27,42,.35);
@@ -41,6 +42,7 @@
       --frio-soft:#12314A;
       --calor:#FF7E47;
       --calor-soft:#3A2016;
+      --ok:#3DDC84;
       --hero:#060C13;
       --hero-ink:#EAF0F5;
       --shadow:0 18px 40px -22px rgba(0,0,0,.7);
@@ -57,6 +59,7 @@
     --frio-soft:#12314A;
     --calor:#FF7E47;
     --calor-soft:#3A2016;
+    --ok:#3DDC84;
     --hero:#060C13;
     --hero-ink:#EAF0F5;
     --shadow:0 18px 40px -22px rgba(0,0,0,.7);
@@ -242,6 +245,26 @@
   .lightbox p{color:#fff;text-align:center;margin-top:12px;font-weight:600}
   .lb-bar{display:flex;justify-content:center;gap:10px;margin-top:12px}
   .lb-bar button{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:8px 16px;font:600 .9rem var(--body);cursor:pointer}
+
+  /* ---------- Casos antes / después ---------- */
+  .casos{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;margin-bottom:28px}
+  .caso{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;display:flex;flex-direction:column;gap:14px}
+  .caso-top{display:flex;align-items:center;gap:14px}
+  .caso-top .ico{background:var(--frio-soft);color:var(--frio);flex:none}
+  .caso h3{font-size:1.2rem}
+  .caso-top small{display:block;color:var(--ink-soft);font-size:.88rem;margin-top:2px}
+  .ba{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;background:var(--ground);border-radius:12px;padding:12px 14px}
+  .ba span{display:grid;gap:2px}
+  .ba small{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+  .ba b{font-family:var(--mono);font-weight:500;font-size:1.15rem;font-variant-numeric:tabular-nums}
+  .ba .antes b{color:var(--calor)}
+  .ba .despues{text-align:right}
+  .ba .despues b{color:var(--ok)}
+  .ba .flecha{color:var(--ink-soft);font-size:1.1rem}
+  .caso p{font-size:.93rem;color:var(--ink-soft)}
+  .caso p strong{color:var(--ink);font-weight:600}
+  .caso .sello{margin-top:auto;padding-top:12px;border-top:1px dashed var(--line);display:flex;align-items:center;gap:8px;font-size:.85rem;font-weight:600;color:var(--ok)}
+  .caso .sello svg{width:16px;height:16px}
 
   /* ---------- Process ---------- */
   .process{background:var(--surface);border-block:1px solid var(--line)}
@@ -460,11 +483,12 @@
       <div class="head">
         <div>
           <span class="eyebrow">Trabajos realizados</span>
-          <h2>Los equipos que reparamos</h2>
+          <h2>Así llegaron, así quedaron</h2>
         </div>
-        <p>Fotos de muestra (Unsplash). En la versión final van fotos reales de los trabajos. Tocá una para verla en grande.</p>
+        <p>Cada trabajo se entrega medido y probado. Estos son casos típicos de reparación.</p>
       </div>
-      <div class="gallery" id="gallery"></div>
+      <div class="casos" id="casos"></div>
+      <div class="gallery" id="gallery" hidden></div>
       <p class="gallery-note">¿Tenés una foto o video de tu equipo roto? Mandalo por WhatsApp y te damos un diagnóstico preliminar.
         <a class="ask" data-wa="Hola! Te mando una foto de mi equipo para que lo veas: " href="#contacto"><svg><use href="#i-wa"/></svg>Enviar foto</a></p>
     </div>
@@ -617,19 +641,20 @@ const CATALOGO = [
   { tipo:"hogar", nombre:"Microondas",           spec:"220 V · 50 Hz",  fallas:["No calienta","Plato no gira","Magnetrón","Panel y teclas"], icon:"micro" }
 ];
 
-/* Galería: fotos de muestra de Unsplash. Para usar fotos propias, subilas a "fotos/" y poné foto:"fotos/archivo.jpg".
-   icon = ícono que se muestra si la foto todavía no existe (mismos nombres que en CATALOGO). */
-const U = id => `https://images.unsplash.com/photo-${id}?w=900&q=75&auto=format&fit=crop`;
-const GALERIA = [
-  { foto:U("1588854337115-1c67d9247e4d"), titulo:"Heladera No Frost de dos puertas",  equipo:"Heladera",    icon:"fridge" },
-  { foto:U("1629234358103-5b5ee53ece9c"), titulo:"Anafe a gas de cuatro hornallas",   equipo:"Anafe",       icon:"cooktop" },
-  { foto:U("1626806787461-102c1bfaaea1"), titulo:"Lavarropas de carga frontal",       equipo:"Lavarropas",  icon:"washer" },
-  { foto:U("1623114112815-74a4b9fe505d"), titulo:"Cocina con horno a gas",            equipo:"Cocina",      icon:"stove" },
-  { foto:U("1726614846573-c1ac2e6161d1"), titulo:"Aire acondicionado split",          equipo:"Aire acond.", icon:"ac" },
-  { foto:U("1728509741559-44172bcd86b3"), titulo:"Llama azul: combustión correcta",   equipo:"Gas",         icon:"flame" },
-  { foto:U("1721563927724-74b1a0ddef33"), titulo:"Heladera con freezer",              equipo:"Heladera",    icon:"fridge" },
-  { foto:U("1626143508000-4b5904e5e84a"), titulo:"Microondas de acero",               equipo:"Microondas",  icon:"micro" }
+/* Casos de reparación (antes → después). Son ejemplos: reemplazalos por trabajos reales. */
+const CASOS = [
+  { icon:"fridge",  equipo:"Heladera No Frost",   falla:"No enfriaba el freezer",       arreglo:"Cambio de sensor de deshielo",       medida:"Freezer",        antes:"−4 °C",   despues:"−18 °C" },
+  { icon:"washer",  equipo:"Lavarropas automático", falla:"No centrifugaba y hacía ruido", arreglo:"Rulemanes y retén nuevos",          medida:"Centrifugado",   antes:"0 rpm",   despues:"800 rpm" },
+  { icon:"stove",   equipo:"Cocina a gas",        falla:"El horno no calentaba",        arreglo:"Válvula de seguridad y termocupla",  medida:"Horno",          antes:"60 °C",   despues:"220 °C" },
+  { icon:"ac",      equipo:"Aire acondicionado split", falla:"Tiraba aire caliente",    arreglo:"Reparación de fuga y carga de gas R-410a", medida:"Salida de aire", antes:"24 °C", despues:"9 °C" },
+  { icon:"heater",  equipo:"Termotanque",         falla:"Se apagaba el piloto",         arreglo:"Termocupla y limpieza de quemador",  medida:"Agua",           antes:"18 °C",   despues:"60 °C" },
+  { icon:"micro",   equipo:"Microondas",          falla:"Funcionaba pero no calentaba", arreglo:"Magnetrón nuevo",                    medida:"Potencia",       antes:"0 W",     despues:"800 W" }
 ];
+
+/* Galería de fotos: vacía por ahora (la sección se oculta sola).
+   Para mostrar fotos reales, subilas a "fotos/" y agregalas así:
+   { foto:"fotos/heladera-1.jpg", titulo:"Heladera No Frost · cambio de sensor", equipo:"Heladera", icon:"fridge" } */
+const GALERIA = [];
 
 /* Íconos de línea para cada equipo */
 const ICONS = {
@@ -715,7 +740,24 @@ document.getElementById("form").addEventListener("input", armarMensaje);
 document.getElementById("form").addEventListener("submit", e => e.preventDefault());
 armarMensaje();
 
+/* Casos antes / después */
+document.getElementById("casos").innerHTML = CASOS.map(c => `
+  <article class="caso">
+    <div class="caso-top">
+      <span class="ico">${`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[c.icon]}</svg>`}</span>
+      <div><h3>${c.equipo}</h3><small>${c.falla}</small></div>
+    </div>
+    <div class="ba" aria-label="${c.medida}: antes ${c.antes}, después ${c.despues}">
+      <span class="antes"><small>Antes</small><b>${c.antes}</b></span>
+      <span class="flecha" aria-hidden="true">→</span>
+      <span class="despues"><small>Después</small><b>${c.despues}</b></span>
+    </div>
+    <p><strong>${c.medida}.</strong> ${c.arreglo}.</p>
+    <div class="sello"><svg><use href="#i-check"/></svg>Probado y con 90 días de garantía</div>
+  </article>`).join("");
+
 /* Galería + visor */
+document.getElementById("gallery").hidden = GALERIA.length === 0;
 const gallery = document.getElementById("gallery");
 const svgIcon = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[k] || ICONS.fridge}</svg>`;
 gallery.innerHTML = GALERIA.map((g, i) => `
